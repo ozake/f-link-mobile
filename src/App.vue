@@ -45,7 +45,7 @@ export default {
     },
     makeHeaderTitle(){
       switch (this.$route.path) {
-        case '/store':
+        case '/m/store':
           this.subHeaderTitle = '우리동네 매장'
           break;
       
@@ -54,7 +54,7 @@ export default {
           
           break;
       }
-      if(this.$route.path === '/store'){
+      if(this.$route.path === '/m/store'){
         this.isStore = true
       }else {
         this.isStore = false

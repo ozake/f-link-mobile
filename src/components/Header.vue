@@ -46,7 +46,7 @@ export default {
   created(){
 	  this.$EventBus.$on('sideMenuOff', this.sideMenuOnOff)
 	  //console.log(this.$route.path)
-	  if(this.$route.path === '/'){
+	  if(this.$route.path === '/m/' || this.$route.path === '/m'){
 		  this.isMain = true
 	  }else {
 			this.isMain = false
@@ -55,7 +55,7 @@ export default {
   watch: {
 	  $route: function() {
 		  //console.log(this.$route.path)
-		if(this.$route.path === '/') {
+		if(this.$route.path === '/m/' || this.$route.path === '/m') {
 			this.isMain = true
 		}else {
 			this.isMain = false

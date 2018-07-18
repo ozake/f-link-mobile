@@ -18,6 +18,18 @@ const router = new Router({
   linkActiveClass: "",
 })
 
+router.beforeEach((to, from, next) => {
+  // ...
+  //console.log(to.path)
+  if(to.path === '/'){
+    next({ path: '/m/' })
+    console.log('리다이렉트')
+    //next('/m/')
+  }else {
+    next()
+  }
+})
+
 new Vue({
   router,
   el: '#app',

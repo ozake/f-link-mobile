@@ -3,12 +3,12 @@ import Main from './Main.vue'
 import Store from './Store.vue'
 export default [
     {
-      path: '/',
+      path: '/m/',
       name: 'home-page',
       component: Main
     },
     {
-      path: '/store',
+      path: '/m/store',
       name: 'store-page',
       component: Store
     },
