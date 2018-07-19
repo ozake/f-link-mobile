@@ -2,6 +2,8 @@
 <!--  section -->
     <section>
         <div class="store">
+            <div class="blak_close" v-if="recommLayerFlag" @click="recommLayerToggle"><img src="http://m.mk.co.kr/images/2018/franchise/btn_menu_close.png" alt="닫기"></div>
+            <div class="blak_bg" v-if="recommLayerFlag" @click="recommLayerToggle"></div>
             <div class="srch_wrap1" v-show="!listFlag">
                     <ul class="select_03">
                                 <li>
@@ -45,26 +47,35 @@
                     </ul>
             </div>
             <div class="map" ref="map" v-bind:style="mapHeight">
-                <button class="ticker" type="button">건물 추천</button>
+                <button class="ticker" type="button" @click="recommLayerToggle">건물 추천</button>
+                <button class="ticker02" type="button" @click="anotherRecomm" v-if="recommBldFlag">다른 업종<br>선택</button>
                 <button class="st_05" type="button" @click="ListToggle">목록</button>
             </div>
             
 
             <div class="map_list" v-show="listFlag">
-					<ul style="height: 242px;">
-						<li v-for="(item, index) in mapList">
-							<strong>{{index}}</strong>
+					<ul style="height: 242px;" v-if="!recommBldFlag">
+						<li v-for="(item, index) in mapList" :class="{'list-item-active': index === listActiveIdx}" :id="item.bdMgtSn">
+							<strong>{{index + 1}}</strong>
 							<a href="#">{{item.refBnm}}<img :src="item.img1" :alt="item.refBnm"></a>
 							<span>{{item.addr}}</span>
 						</li>
 					</ul>
+                    <h1 v-if="recommBldFlag">본 추천서비스는 매출 통계를 활용한 추천이며, 본사는 추천에 대한 책임을 지지 않습니다.</h1>
+                    <ul style="height: 193px;" v-if="recommBldFlag">
+						<li>건물추천</li>
+					</ul>
+
 				</div>
 
         </div>
+        <recomm-layer v-if="recommLayerFlag"></recomm-layer>
+        
     </section>
 <!--//  section -->
 </template>
 <script>
+import recommLayer from './components/recommLayer.vue';
 import ApiModel from "./model/apiModel.js"
 import { Queue } from './model/colections'
 import { convertGeo, phoneFomatter } from './model/util.js'
@@ -89,15 +100,22 @@ export default {
           CenterCode: '',
           mapLevel: '',
           listFlag: false,
-          mapList: []
+          mapList: [],
+          infoWindow: Object,
+          listActiveIdx: String,
+          recommLayerFlag: false,
+          recommBldFlag: false
       }
+  },
+  components: {
+      recommLayer
   },
   computed: {
     mapHeight: function() {
       let height = window.innerHeight - 154
 
       if(this.listFlag){
-          height = height - 140
+          height = height - 155
       }
 
       return {
@@ -110,11 +128,22 @@ export default {
           this.sggList = result
       })
       this.getSector()
+      
   },
   mounted(){
       this.$nextTick(function () {
       // 모든 화면이 렌더링된 후 실행합니다.
         this.mapRendring()
+        //this.$EventBus.$on('layerOff', this.recommLayerToggle)
+        this.$EventBus.$on('recommCte', (val)=>{
+          if(val){
+              //this.recommBldToggle()
+              this.recommBld()
+          }
+          this.recommLayerToggle()
+          //this.recommBldToggle()
+          //this.recommBld()
+        })
       })
   },
   watch : {
@@ -133,6 +162,18 @@ export default {
           if(this.sectorMSelected !== '중분류'){
               if(this.brandSeldected !== '')
               this.getFranchiseList(this.sectorMSelected, val)
+          }
+      },
+      mapList : function (val){
+          this.listActiveIdx = ''
+          if(Object.keys(this.infoWindow).length !== 0){
+            this.infoWindow.close()
+          }
+          if(val.length === 0){
+              if(this.listFlag === true){
+                  this.ListToggle()
+              }
+              
           }
       }
   },
@@ -270,6 +311,13 @@ export default {
                     geocoder.coord2RegionCode(coords.getLng(), coords.getLat(), this.displayCenterInfo)
                 }
             })
+
+            daum.maps.event.addListener(map, 'click', (mouseEvent) => {
+                if(Object.keys(this.infoWindow).length !== 0){
+                    this.infoWindow.close()
+                    this.listActiveIdx = ''
+                }
+            })
       },
       displayCenterInfo(result, status) {
           if (status === daum.maps.services.Status.OK) {
@@ -312,7 +360,7 @@ export default {
         CenterCode= CenterCode.substring(0,8);
         this.makersCleanPromise().then(()=>{
             this.apiModel.getOP501(CenterCode,SectorCode, 100, 1, CenterCode).then((result)=>{
-                console.log(result)
+                //console.log(result)
                 if(result.status === 200){
                     let data = result.data.data.rows
                     let brands = result.data.data.brands
@@ -346,12 +394,15 @@ export default {
         let x = null
         let y = null
         let marker = null
-        
+        let idx = 0;
         for (const value of data) {
             x = Number(value.xAxis)
             y = Number(value.yAxis)
             marker = this.setMarker(x,y,value)
+            marker.idx = idx
             this.MakrersQueue.setQueue(marker)
+            this.markerAddEventListenner(marker, value)
+            idx++
         }
     },
     setMarker(x,y,value) {
@@ -403,9 +454,66 @@ export default {
 
         this.mapList = data
     },
-    ListToggle(){
+    ListToggle() {
         this.mapHeight
         this.listFlag = (this.listFlag) ? false : true
+    },
+    ListOnOff(val) {
+        this.mapHeight
+        // this.listFlag = (this.listFlag) ? false : true
+        if(val === 'on'){
+            this.listFlag = true
+        }else if(val === 'off'){
+            this.listFlag = false
+        }
+    },
+    markerAddEventListenner(marker, value) {
+        // 마커에 커서가 오버됐을 때 마커 위에 표시할 인포윈도우를 생성합니다
+        let iwContent = `<div style="padding:5px;height:65px;">${value.addr}<br/>${value.refBnm}</div>` // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
+
+        // 인포윈도우를 생성합니다
+        let infowindow = new daum.maps.InfoWindow({
+            content : iwContent
+        })
+        infowindow.setZIndex(100)
+
+        daum.maps.event.addListener(marker, 'click', () => {
+            //console.log(marker)
+            if(Object.keys(this.infoWindow).length !== 0){
+                this.infoWindow.close()
+            }
+            let coords = marker.getPosition()
+            this.mapInstance.setCenter(coords)
+            infowindow.open(this.mapInstance, marker)
+            this.infoWindow = infowindow
+            this.listActiveIdx = marker.idx
+            if(!this.listFlag) this.listFlag = true
+            this.$nextTick(function(){
+                //let activeItem = document.getElementById(value.bdMgtSn)
+                let activeItem = this.$el.getElementsByClassName('list-item-active')
+                setTimeout(()=>{
+                    //console.log(activeItem.item(0))
+                    activeItem.item(0).scrollIntoView(true)
+                    }, 150)
+            })
+        })
+    },
+    recommBld() {
+        this.recommBldToggle()
+        this.ListOnOff('on')        
+    },
+    recommBldToggle() {
+        this.recommBldFlag = (this.recommBldFlag) ? false : true
+    },
+    recommLayerToggle() {
+        this.recommLayerFlag = (this.recommLayerFlag) ? false : true
+        if(this.recommLayerFlag){
+            this.ListOnOff('off')
+        }
+    },
+    anotherRecomm() {
+        this.recommBldFlag = false
+        this.recommLayerToggle()
     }
   }
   
@@ -417,8 +525,19 @@ export default {
     width: 85px;
     height: 85px;
 }
+.store .ticker02 {
+    bottom: 25px;
+    width: 85px;
+    height: 85px;
+}
 .map_list {
     -webkit-overflow-scrolling:touch;
+}
+.list-item-active {
+    background-color: antiquewhite;
+}
+.map_list ul li a img {
+    top: 14px;
 }
 </style>
 
