@@ -24,7 +24,7 @@
                                     </select>									
                                 </li>
                     </ul>
-                    <ul class="select_03">
+                    <ul class="select_03" v-show="!recommBldFlag">
                                 <li>
                                     <select title="대분류" v-model="sectorSelected">
                                         <option>대분류</option>
@@ -116,6 +116,10 @@ export default {
 
       if(this.listFlag){
           height = height - 155
+      }
+
+      if(this.recommBldFlag && ! this.listFlag){
+          height = height + 40
       }
 
       return {
@@ -500,7 +504,8 @@ export default {
     },
     recommBld() {
         this.recommBldToggle()
-        this.ListOnOff('on')        
+        this.ListOnOff('on')
+        
     },
     recommBldToggle() {
         this.recommBldFlag = (this.recommBldFlag) ? false : true
