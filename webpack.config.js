@@ -50,6 +50,8 @@ module.exports = {
     noInfo: true,
     overlay: true,
     host: "110.13.170.148"
+    //host: "127.0.0.1"
+    //host: "192.168.1.180"
   },
   performance: {
     hints: false
