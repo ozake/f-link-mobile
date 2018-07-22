@@ -44,14 +44,20 @@ export default {
       this.$EventBus.$emit('sideMenuOff', '')
     },
     makeHeaderTitle(){
-      switch (this.$route.path) {
-        case '/m/store':
+      let path = this.$route.path
+      let matchArr = path.split('/', 3)
+      let matchStr =  matchArr[2]
+      switch (matchStr) {
+        case 'store':
           this.subHeaderTitle = '우리동네 매장'
           break;
-      
+        case 'storeView':
+          this.subHeaderTitle = '매장 상세정보'
+          break;
+
         default:
           this.subHeaderTitle = ''
-          
+
           break;
       }
       if(this.$route.path === '/m/store'){
