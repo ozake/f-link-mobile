@@ -60,7 +60,7 @@
 					<ul style="height: 242px;" v-if="!recommBldFlag">
 						<li v-for="(item, index) in mapList" :class="{'list-item-active': index === listActiveIdx}" :id="item.bdMgtSn">
 							<strong>{{index + 1}}</strong>
-							<a href="#">{{item.refBnm}}<img :src="item.img1" :alt="item.refBnm"></a>
+							<router-link :to="{ name: 'store-view', params: {categoryCode: sectorMSelected, storeName: item.Base64RefBnm, id:item.bdMgtSn } }">{{item.refBnm}}<img :src="item.img1" :alt="item.refBnm"></router-link>
 							<span>{{item.addr}}</span>
 						</li>
 					</ul>
@@ -86,6 +86,7 @@ import recommLayer from './components/recommLayer.vue';
 import ApiModel from "./model/apiModel.js"
 import { Queue } from './model/colections'
 import { convertGeo, phoneFomatter } from './model/util.js'
+import { Base64 } from 'js-base64'
 export default {
   name: 'Store',
   data() {
@@ -175,7 +176,7 @@ export default {
       },
       CenterCode : function (val){
           if(this.sectorMSelected !== '중분류'){
-              if(this.brandSeldected !== '')
+              if(this.brandSeldected !== '' && !this.recommBldFlag)
               this.getFranchiseList(this.sectorMSelected, val)
           }
       },
@@ -412,6 +413,7 @@ export default {
                   if(result.status === 200){
                       let data = result.data.data.rows
                       let brands = result.data.data.brands
+                      console.log(data)
                       if(this.brandSeldected !== '브랜드' && this.brandSeldected !== 'all'){
                           let brandSlectedFlag = false
                           for (const value of brands) {
@@ -498,6 +500,8 @@ export default {
             }
             tel = phoneFomatter(tel)
             value.tel = tel
+            let Base64RefBnm = Base64.encode(value.refBnm)
+            value.Base64RefBnm = Base64RefBnm
         }
 
         this.mapList = data
