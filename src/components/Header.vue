@@ -10,7 +10,7 @@
 			<ul class='menu_list'>
 				<li><router-link :to="{ name: 'home-page' }"><img src="http://m.mk.co.kr/images/2018/franchise/ico_menu_home.png" alt="홈">홈</router-link></li>
 				<li><router-link :to="{ name: 'store-page' }"><img src="http://m.mk.co.kr/images/2018/franchise/ico_menu_loca.png" alt="우리동네 매장">우리동네 매장</router-link></li>
-				<li><a href="#"><img src="http://m.mk.co.kr/images/2018/franchise/ico_menu_building.png" alt="상가매물">상가매물</a></li>
+				<li><router-link :to="{ name: 'sales-page' }"><img src="http://m.mk.co.kr/images/2018/franchise/ico_menu_building.png" alt="상가매물">상가매물</router-link></li>
 				<li><a href="#"><img src="http://m.mk.co.kr/images/2018/franchise/ico_menu_store.png" alt="브랜드">브랜드</a></li>
 				<li><a href="#"><img src="http://m.mk.co.kr/images/2018/franchise/ico_menu_sale.png" alt="착한 컨설팅">착한 컨설팅</a></li>
 				<li><a href="#"><img src="http://m.mk.co.kr/images/2018/franchise/ico_menu_news.png" alt="창업뉴스">창업뉴스</a></li>

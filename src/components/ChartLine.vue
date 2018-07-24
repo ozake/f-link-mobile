@@ -1,6 +1,6 @@
 <template>
   <!-- 레이더차트 -->
-    <canvas id="lineChart" ref="lineChart" width="1003" height="300"></canvas>
+    <canvas id="lineChart" ref="lineChart" height="350"></canvas>
   <!-- //레이더 차트 -->
 </template>
 <script>

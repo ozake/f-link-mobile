@@ -7,7 +7,7 @@
             <div class="srch_wrap1" v-show="!listFlag">
                     <ul class="select_03">
                                 <li>
-                                    <select onchange="selectMove(this.form)" title="서울">
+                                    <select title="시,도">
                                         <option>서울</option>
                                     </select>
                                 </li>
@@ -59,16 +59,20 @@
             <div class="map_list" v-show="listFlag">
 					<ul style="height: 242px;" v-if="!recommBldFlag">
 						<li v-for="(item, index) in mapList" :class="{'list-item-active': index === listActiveIdx}" :id="item.bdMgtSn">
-							<strong>{{index + 1}}</strong>
-							<router-link :to="{ name: 'store-view', params: {categoryCode: sectorMSelected, storeName: item.Base64RefBnm, id:item.bdMgtSn } }">{{item.refBnm}}<img :src="item.img1" :alt="item.refBnm"></router-link>
-							<span>{{item.addr}}</span>
+							<router-link :to="{ name: 'store-view', params: {categoryCode: sectorMSelected, storeName: item.Base64RefBnm, id:item.bdMgtSn } }">
+                                <strong>{{index + 1}}</strong>
+                                {{item.refBnm}}<img :src="item.img1" :alt="item.refBnm">
+                                <span>{{item.addr}}</span>
+                            </router-link>
 						</li>
 					</ul>
           <h1 v-if="recommBldFlag">본 추천서비스는 매출 통계를 활용한 추천이며, 본사는 추천에 대한 책임을 지지 않습니다.</h1>
           <ul style="height: 193px;" v-if="recommBldFlag">
 						<li v-for="(item, index) in recommList" :class="{'list-item-active': index === recommActiveIdx}">
-						  <div class="icon_b"></div>
-						  <a href="#"><p>{{item.addr}}</p>- {{item.buldNm}}</a>
+						  <router-link :to="{ name: 'store-view', params: {categoryCode: recommCode, storeName: '7LaU7LKc6rG066y8', id:item.bdMgtSn } }">
+                            <div class="icon_b"></div>
+                            <p>{{item.addr}}</p>- {{item.buldNm}}
+						  </router-link>
 					  </li>
 
 					</ul>
@@ -116,7 +120,8 @@ export default {
           recommMarkerQueue: new Queue(),
           recommInfoWindow: Object,
           recommActiveIdx: String,
-          recommList: []
+          recommList: [],
+          recommCode: ''
       }
   },
   components: {
@@ -153,6 +158,7 @@ export default {
         //this.$EventBus.$on('layerOff', this.recommLayerToggle)
         this.$EventBus.$on('recommCte', (val)=>{
           if(val){
+              this.recommCode = val
               //this.recommBldToggle()
               this.recommBld(val)
           }

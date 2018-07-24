@@ -1,6 +1,6 @@
 <template>
   <!-- 레이더차트 -->
-    <canvas id="BarChart" ref="BarChart" width="490" height="200"></canvas>
+    <canvas id="BarChart" ref="BarChart"></canvas>
   <!-- //레이더 차트 -->
 </template>
 <script>

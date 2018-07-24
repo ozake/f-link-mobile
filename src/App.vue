@@ -2,7 +2,7 @@
   <div id="wrapper" data-role="page">
     <Header :subHeaderTitle="subHeaderTitle"></Header>
     <router-view></router-view>
-    <Footer v-if="!isStore"></Footer>
+    <Footer v-if="footerFlag"></Footer>
     <div class="nav_bg" v-show="navBgFlag" @click="sideMenuOff"></div>
   </div>
 </template>
@@ -20,7 +20,7 @@ export default {
       return {
           navBgFlag : false,
           subHeaderTitle: '',
-          isStore: false
+          footerFlag: true
       }
   },
   created(){
@@ -50,9 +50,14 @@ export default {
       switch (matchStr) {
         case 'store':
           this.subHeaderTitle = '우리동네 매장'
+          this.footerFlag = false
           break;
         case 'storeView':
           this.subHeaderTitle = '매장 상세정보'
+          break;
+        case 'sales':
+          this.subHeaderTitle = '상가점포 매물검색'
+          this.footerFlag = false
           break;
 
         default:
@@ -60,11 +65,11 @@ export default {
 
           break;
       }
-      if(this.$route.path === '/m/store'){
-        this.isStore = true
+      /* if(this.$route.path === '/m/store'){
+        this.footerFlag = true
       }else {
-        this.isStore = false
-      }
+        this.footerFlag = false
+      } */
     }
   }
 }

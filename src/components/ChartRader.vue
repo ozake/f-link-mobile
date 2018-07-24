@@ -1,6 +1,6 @@
 <template>
   <!-- 레이더차트 -->
-    <canvas ref="raderChart" width="499" height="290"></canvas>
+    <canvas ref="raderChart" height="300"></canvas>
   <!-- //레이더 차트 -->
 </template>
 <script>
@@ -27,6 +27,7 @@ export default {
                 datasets: this.datasets
             },
             options: this.options
+            
         })
       }
   }

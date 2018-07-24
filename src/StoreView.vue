@@ -16,7 +16,7 @@
 						</div>
 						<div class="peple">
 							<h1>유동인구 유입경로</h1>
-							<h2>이 영역에서 유동인구가 가장 높게 유입되는 방향은 ‘남서’측이며, 도보한계치는 최대 596m까지 입니다. </h2>
+							<h2>이 영역에서 유동인구가 가장 높게 유입되는 방향은 ‘{{basedMaster.direction}}’이며, 도보한계치는 최대 {{basedMaster.distM}}m까지 입니다. </h2>
 							<p>※ 도보한계치란? 도보로 이동했을 때, 빌딩을 이용하는데 불편함을 느끼지 않는 한계 거리를 의미합니다</p>
 						</div>
 					</div>
@@ -68,7 +68,7 @@
 						<table class="box_white">
 							<tbody>
 								<tr v-for="item in buildIn">
-									<th>{{item.refNm}} {{item.refNm}}</th>
+									<th>{{item.refNm}} {{item.refBnm}}</th>
 									<td>{{item.tel}}</td>
 								</tr>
 							</tbody>
@@ -81,7 +81,9 @@
 						<p>※건물을 중심으로 인구 흐름을 분석한 배후지영역에 대한 평가</p>
 						<div class="value">
 							<div>
-								<div class="graph1"><img alt="건물평가지표 임시이미지" src="http://m.mk.co.kr/images/2018/franchise/img_graph1.jpg" style="width:100%"></div>
+								<div class="RaderGraphContainer">
+									<chart-rader :labels="raderChartLabels" :datasets="raderChartDatasets" :options="raderChartOption"></chart-rader>
+								</div>
 								<div class="box_beige">
 									<ul>
 										<li><strong>지표 설명</strong></li>
@@ -111,18 +113,11 @@
 								</div>
 								<div class="mobility">
 									<h2>유동성 - 요일별, 시간대별 유동인구 현황</h2>
-									<div>
-										<h3>동월 매출 변동 추이</h3>
-										<select onchange="selectMove(this.form)" title="달력">
-											<option>1월</option>
-										</select>
-										<p>*매출추이는 특정 카드사의 매출자료로 추정한 금액입니다.</p>
-										<div  class="graph3" style="width: 100%; height: 150px;background-color: rgb(242, 242, 242);"></div>
+									<!--요일별, 시간대별  그래프영역 -->
+									<div class="lineGraphContainer">
+										<chart-line :labels="lineChartLabels" :datasets="lineChartDatasets" :options="lineChartOption"></chart-line>
 									</div>
-									<div>
-										<h3>시간대별 매출 비중 (최근 3개월 평균매출)</h3>
-										<div  class="graph3" style="width: 100%; height: 150px;background-color: rgb(242, 242, 242);"></div>
-									</div>
+									<!--//요일별, 시간대별  그래프영역 -->
 								</div>
 							</div>
 
@@ -135,7 +130,7 @@
 											<tr>
 												<th rowspan="2">건물</th>
 												<td>주차가능 대수</td>
-												<td>20대</td>
+												<td>{{item.totalparknum}}대</td>
 											</tr>
 											<tr>
 												<td>승강기 대수</td>
@@ -144,12 +139,12 @@
 											<tr class="line"><td colspan="3"></td></tr>
 											<tr>
 												<th rowspan="2">배후지영역</th>
-												<td>지하철 정보</td>
-												<td>동묘앞역2번출구</td>
+												<td>지하철역 입구 수</td>
+												<td>{{basedInfo.subCnt}}개</td>
 											</tr>
 											<tr>
 												<td>버스정류장 수</td>
-												<td>2개</td>
+												<td>{{basedInfo.busCnt}}개</td>
 											</tr>
 										</tbody>
 									</table>
@@ -157,39 +152,34 @@
 							</div>
 							<div>
 								<h1>성장성</h1>
-								<p>※한식업종 매출추이</p>
+								<p>※{{sectorName}}업종 매출추이</p>
 								<div>
 									<h2>전년도 연간 매출 변동추이</h2>
-									<div  class="graph3" style="width: 100%; height: 150px;background-color: rgb(242, 242, 242);"></div>
+									<div class="lindGraphContainer">
+										<chart-line v-show="tpindSlngFlag" :labels="salesChartLabels" :datasets="salesChartDatasets" :options="salesChartOption"></chart-line>
+						     			 <!--그래프 없을경우 -->
+										<div v-if="!tpindSlngFlag" style="background-color:#f2f2f2; width:100%; height: 100%;">
+											<p class="nograph">해당업종 정보가 5건 이하로 그래프를 제공하지 않습니다.</p>
+										</div>
+							  			<!--//그래프 없을경우 -->
+									</div>
+									<!-- <div  class="graph3" style="width: 100%; height: 150px;background-color: rgb(242, 242, 242);"></div> -->
 								</div>
 							</div>
 							<div>
 								<h1>안정성</h1>
 								<div>
-									<h2>한식업종 평균 영업기간 [단위: 년]</h2>
-									<div  class="graph3" style="width: 100%; height: 150px;background-color: rgb(242, 242, 242);"></div>
+									<h2>{{sectorName}}업종 평균 영업기간 [단위: 년]</h2>
+									<div  class="graph3" style="width: 100%; height: 150px;">
+										<chart-bar :labels="averageChartLabels" :datasets="averageChartDatasets" :options="averageChartOption"></chart-bar>
+									</div>
 								</div>
 								<div>
-									<h2>배후지 영역 내 한식업종 사업체 수</h2>
+									<h2>배후지 영역 내 {{sectorName}}업종 사업체 수</h2>
 									<ul class="box_white">
-										<li><span>사랑방 갈비</span><p>서울특별시 중구 필동 1가 134 매경빌딩 102허</p></li>
-										<li><span>사랑방 갈비</span><p>서울특별시 중구 필동 1가 134 매경빌딩 102허</p></li>
-										<li><span>사랑방 갈비</span><p>서울특별시 중구 필동 1가 134 매경빌딩 102허</p></li>
-										<li><span>사랑방 갈비</span><p>서울특별시 중구 필동 1가 134 매경빌딩 102허</p></li>
-										<li><span>사랑방 갈비</span><p>서울특별시 중구 필동 1가 134 매경빌딩 102허</p></li>
-										<li><span>사랑방 갈비</span><p>서울특별시 중구 필동 1가 134 매경빌딩 102허</p></li>
-										<li><span>사랑방 갈비</span><p>서울특별시 중구 필동 1가 134 매경빌딩 102허</p></li>
-										<li><span>사랑방 갈비</span><p>서울특별시 중구 필동 1가 134 매경빌딩 102허</p></li>
+										<li v-for="item in catStoreList"><span>{{item.refNm + ' ' + item.refBnm}}</span><p>{{item.addr}}</p></li>
 									</ul>
 								</div>
-							</div>
-							<div>
-								<h1>수익성</h1>
-								<p>※한식 업종의 지역 객단가 비교</p>
-								<div class="box_beige">
-									<p>한식 업종의 선택 지역 객단가(결제 1건당 매출액)는 지역 평균값 0,000원과 비슷한 수준입니다. (업종 특성 상 메뉴, 영업형태 등 요소에 의해 객단가 평가에 차이가 발생할 수 있습니다.)</p>
-								</div>
-
 							</div>
 						</div>
 					</div>
@@ -201,13 +191,18 @@
 </template>
 
 <script>
+  import ChartRader from './components/ChartRader.vue';
+  import ChartLine from './components/ChartLine.vue';
+  import ChartBar from './components/ChartBar.vue';
   import { convertGeo, phoneFomatter } from './model/util.js'
   import DataPaser from "./model/dataPaser.js"
   import ApiModel from './model/apiModel.js'
   export default {
     name: 'Main',
     components: {
-
+		ChartRader,
+		ChartLine,
+		ChartBar
     },
     data() {
       return {
@@ -227,19 +222,21 @@
 				ticks: {
 					beginAtZero: true
 				}
-			}
+			},
+			devicePixelRatio: 2
 		},
-		lineChartLabels : ['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23'],
+		//lineChartLabels : ['00','01','02','03','04','05','06','07','08','09','10','11','12','13','14','15','16','17','18','19','20','21','22','23'],
+		lineChartLabels : ['00','03','06','09','12','15','18','21'],
 		lineChartDatasets : [],
 		lineChartOption : {
 			tooltips: {
 				mode: 'index',
-				intersect: false,
+				intersect: true,
 			},
-			hover: {
+			/* hover: {
 				mode: 'nearest',
 				intersect: true
-			},
+			}, */
 			scales: {
 				xAxes: [{
 					display: true,
@@ -249,22 +246,26 @@
 					}
 				}],
 				yAxes: [{
-					display: true,
+					display: false,
 					scaleLabel: {
-						display: true,
+						display: false,
 						labelString: '유동인구(명)'
 					}
 				}]
-			}
+			},
+			devicePixelRatio: 2,
+			maintainAspectRatio: false
 		},
-		salesChartLabels : ['2017.02','2017.03',	'2017.04', '2017.05', '2017.06', '2017.07', '2017.08', '2017.09',	'2017.10', '2017.11',	'2017.12',	'2018.01',	'2018.02'],
+		salesChartLabels : ['2017.02','2017.03','2017.04', '2017.05', '2017.06', '2017.07', '2017.08', '2017.09','2017.10', '2017.11', '2017.12', '2018.01', '2018.02'],
 		salesChartDatasets : [],
 		salesChartOption : {
 			tooltips: {
+				enabled: false,
 				mode: 'index',
 				intersect: false,
 			},
 			hover: {
+				enabled: false,
 				mode: 'nearest',
 				intersect: true
 			},
@@ -284,7 +285,7 @@
 					}
 				}]
 			},
-
+			devicePixelRatio: 2
 		},
 		averageChartLabels: [],
 		averageChartDatasets : [],
@@ -304,7 +305,8 @@
 						labelString: '영업기간(년도)'
 					}
 				}]
-			}
+			},
+			devicePixelRatio: 2
 		},
 		basedInfo: {},
         ageText: '',
@@ -399,13 +401,13 @@
 					let data = result.data.data.rows[0]
 					data.fpoplSex = this.makeNumberArray(data.fpoplSex, 2)
 					data.fpoplAge = this.makeBasedAgeArr(data.fpoplAge, 0)
-					data.fpoplSun = JSON.parse(data.fpoplSun)
-					data.fpoplMon = JSON.parse(data.fpoplMon)
-					data.fpoplTue = JSON.parse(data.fpoplTue)
-					data.fpoplWed = JSON.parse(data.fpoplWed)
-					data.fpoplThu = JSON.parse(data.fpoplThu)
-					data.fpoplFri = JSON.parse(data.fpoplFri)
-					data.fpoplSat = JSON.parse(data.fpoplSat)
+					data.fpoplSun = JSON.parse(data.fpoplSun).filter(this.arrayMudularFilter)
+					data.fpoplMon = JSON.parse(data.fpoplMon).filter(this.arrayMudularFilter)
+					data.fpoplTue = JSON.parse(data.fpoplTue).filter(this.arrayMudularFilter)
+					data.fpoplWed = JSON.parse(data.fpoplWed).filter(this.arrayMudularFilter)
+					data.fpoplThu = JSON.parse(data.fpoplThu).filter(this.arrayMudularFilter)
+					data.fpoplFri = JSON.parse(data.fpoplFri).filter(this.arrayMudularFilter)
+					data.fpoplSat = JSON.parse(data.fpoplSat).filter(this.arrayMudularFilter)
 					this.basedInfo = data
 					this.basedAge = data.fpoplAge
 					this.lineChartDatasets = [{
@@ -467,6 +469,9 @@
 				}
 			})
 		},
+		arrayMudularFilter(el, idx){
+			return ( idx%3 === 0 ) ? true : false
+		},
 		getBuildingBasedStore(val){
 			this.apiModel.getOP412(val).then((result)=>{
 				if(result.status === 200){
@@ -521,6 +526,7 @@
 							label : '배후지',
 							borderColor: '#f53794',
 							backgroundColor: '#f53794',
+							borderWidth: 1.5,
 							fill: false,
 							data: tpindSlngPanal
 						}
@@ -909,5 +915,19 @@
 }
 .ageBlock:nth-child(7) {
 	background-color: rgba(29, 37, 18, 0.911);
+}
+.RaderGraphContainer {
+	width: 100%;
+	overflow: hidden;
+}
+.lineGraphContainer {
+	width:100%;
+	overflow: hidden;
+}
+.nograph {
+    text-align: center;
+    padding-top: 14%;
+    font-size: 17px;
+    color: #666;
 }
 </style>
