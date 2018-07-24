@@ -48,6 +48,7 @@ export default {
             dongSelected: '동',
             CenterCode: '',
             sggCd: '',
+            estateQueue: new Queue()
 
         }
     },
@@ -75,7 +76,7 @@ export default {
                     this.dongList = result
                     this.dongSelected = '동'
                 })
-            }  
+            }
         },
         CenterCode : function (val){
             //this.getEstateList(val)
@@ -216,48 +217,65 @@ export default {
                     let data = result.data
                     //console.log(data)
                     if(typeof data === 'string'){
-                                    data = data.replace(/\r/g, "")
-                                    data = data.replace(/\\r/g, "")
-                                    data = data.replace(/\n/g, "")
-                                    data = data.replace(/\\n/g, "")
-                                    data = data.replace(/\\'/g, "")
-                        //console.log("파싱에러")
-                        data1 = eval("("+data+")")
-                        //data = JSON.parse(data)
-                        
-                        }
-                    let paging = data.shift()
-                    for (const value of data) {
-                        // if(value.month_deposit_price === 0 && value.month_price){
-                        //   continue
-                        // }
-                        let img = value.img_url
-                        if(img === ''){
-                        img = '/src/assets/fc_noimg_263168.jpg'
-                        }
-                        else {
-                        let tmparr = []
-                        tmparr = img.split( ',', 2 )
-                        img = tmparr[0]
-                        let str = img.replace("http://image.bizmk.kr", "")
-                        let res = str.search("http://image.bizmk.kr")
-                        if(res === -1){
-                            str = 'http://image.bizmk.kr'+str
-                        }
-                        img = str
-                        }
-                        value.img_url = img
-                        //let marker = this.setEstateMaker(value.xpos, value.ypos, value.memul_seq)
-                        markers.push(marker)
-                        this.estateQueue.setQueue(marker)
+                        data = data.replace(/\r/g, "")
+                        data = data.replace(/\\r/g, "")
+                        data = data.replace(/\n/g, "")
+                        data = data.replace(/\\n/g, "")
+                        data = data.replace(/\\'/g, "")
+                        //data = eval("("+data+")")
+                        data = eval(`(${data})`)
                     }
-
-
+                    let paging = data.shift()
+                    this.makeEstateMarkers(data)
                 }
             })
         },
-        makeEstateMarkers() {
-            
+        makeEstateMarkers(data) {
+            for (const value of data) {
+              let img = value.img_url
+              if(img === ''){
+                img = '../src/assets/fc_noimg_263168.jpg'
+                if(location.hostname === 'www.f-link.co.kr' || location.hostname === 'f-link.co.kr'){
+                  img = '/src/assets/fc_noimg_263168.jpg'
+                }
+              }
+              else {
+                let tmparr = []
+                tmparr = img.split( ',', 2 )
+                img = tmparr[0]
+                let str = img.replace("http://image.bizmk.kr", "")
+                let res = str.search("http://image.bizmk.kr")
+                if(res === -1){
+                    str = 'http://image.bizmk.kr'+str
+                }
+                img = str
+              }
+              value.img_url = img
+              let marker = this.setEstateMaker(value.xpos, value.ypos, value.memul_seq)
+              //markers.push(marker)
+              this.estateQueue.setQueue(marker)
+          }
+        },
+        setEstateMaker(x,y,memul_seq) {
+          let icon = new daum.maps.MarkerImage(
+                'http://www.f-link.co.kr/src/assets/estateMarker.png',
+                new daum.maps.Size(20, 30),
+                {
+                  offset: new daum.maps.Point(15, 30),
+                  alt: memul_seq,
+                  shape: "rect",
+                  coords: "0,0,20,30"
+                })
+          let marker = new daum.maps.Marker({
+              //map: this.mapInstance, // 마커를 표시할 지도
+              image: icon,
+              position: new daum.maps.LatLng(y, x), // 마커를 표시할 위치
+              title : memul_seq, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+          })
+          /* if(this.mapLevel !== 6){
+            marker.setMap(this.mapInstance)
+          } */
+          return marker
         }
 
     }
