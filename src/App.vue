@@ -59,6 +59,10 @@ export default {
           this.subHeaderTitle = '상가점포 매물검색'
           this.footerFlag = false
           break;
+        case 'salesView':
+          this.subHeaderTitle = '매물 상세정보'
+          this.footerFlag = false
+          break;
 
         default:
           this.subHeaderTitle = ''

@@ -9,11 +9,11 @@
 				</ul>
 				<ul>
 					<li><a href="#"><img src="http://m.mk.co.kr/images/2018/franchise/btn_fc01.png" alt="브랜드"><span>브랜드</span></a></li>
-					<li><a href="#"><img src="http://m.mk.co.kr/images/2018/franchise/btn_fc02.png" alt="착한 컨설팅"><span>착한 컨설팅</span></a></li>
+					<li><a href="http://www.f-link.co.kr/m/index.php?TM=C"><img src="http://m.mk.co.kr/images/2018/franchise/btn_fc02.png" alt="착한 컨설팅"><span>착한 컨설팅</span></a></li>
 				</ul>
 				<ul>
-					<li><a href="#"><img src="http://m.mk.co.kr/images/2018/franchise/btn_fc06.png" alt="창업 뉴스"><span>창업 뉴스</span></a></li>
-					<li><a href="#"><img src="http://m.mk.co.kr/images/2018/franchise/btn_fc07.png" alt="이벤트"><span>이벤트</span></a></li>
+					<li><a href="http://www.f-link.co.kr/m/index.php?TM=N"><img src="http://m.mk.co.kr/images/2018/franchise/btn_fc06.png" alt="창업 뉴스"><span>창업 뉴스</span></a></li>
+					<li><a href="http://www.f-link.co.kr/m/index.php?TM=D"><img src="http://m.mk.co.kr/images/2018/franchise/btn_fc07.png" alt="이벤트"><span>이벤트</span></a></li>
 				</ul>
 			</div>
 		</section>

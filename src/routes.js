@@ -3,6 +3,7 @@ import Main from './Main.vue'
 import Store from './Store.vue'
 import StoreView from './StoreView.vue'
 import Sales from './Sales.vue'
+import SalesView from './SalesView.vue'
 export default [
     {
       path: '/m/',
@@ -23,6 +24,11 @@ export default [
       path: '/m/sales',
       name: 'sales-page',
       component: Sales
+    },
+    {
+      path: '/m/salesView/:id',
+      name: 'sales-view',
+      component: SalesView
     },
     {
       path: '*',

@@ -2,7 +2,7 @@
     <!--  section -->
     <section>
         <div class="store">
-            <div class="srch_wrap">
+            <div class="srch_wrap" v-show="!listFlag">
                     <ul class="select_03">
                         <li>
                             <select title="시,도">
@@ -24,6 +24,21 @@
                     </ul>
             </div>
             <div class="map" ref="map" v-bind:style="mapHeight">
+                <button class="st_05" type="button" @click="ListToggle">목록</button>
+            </div>
+            <div class="map_list" v-show="listFlag">
+                <ul class="sale" style="height: 242px;">
+                    <li v-for="item in estateList">
+						<a href="#">
+							<span class="img"><img :src="item.img_url" alt=""></span>
+							<span class="text">
+								<span class="tit"><strong>월</strong>보{{item.month_deposit_price}}/월{{item.month_price}}</span>
+								<span class="adress">{{item.area1 + ' ' + item.area2 +' '+ item.area3}}</span>
+								{{item.corrp_flr}}층  {{item.supp_meter}}㎡<br>{{item.subway_info}}
+							</span>
+						</a>
+					</li>
+                </ul>
             </div>
         </div>
     </section>
@@ -48,18 +63,21 @@ export default {
             dongSelected: '동',
             CenterCode: '',
             sggCd: '',
-            estateQueue: new Queue()
-
+            estateQueue: new Queue(),
+            clusterer: Object,
+            clusterClick: '',
+            estateList: [],
+            listFlag: false
         }
     },
     computed: {
         mapHeight: function() {
             let height = window.innerHeight - 110
 
-            /* if(this.listFlag){
-                height = height - 155
+            if(this.listFlag){
+                height = height - 201
             }
-
+            /*
             if(this.recommBldFlag && ! this.listFlag){
                 height = height + 40
             } */
@@ -83,6 +101,14 @@ export default {
         },
         sggCd : function (val) {
             this.getEstateList(val)
+        },
+        clusterClick : function(val) {
+            this.estateClusterList(val)
+        },
+        estateList : function(val) {
+            if(val) {
+                this.ListOnOff('on')
+            }
         }
     },
     created(){
@@ -103,7 +129,7 @@ export default {
             let container = this.$refs.map //지도를 담을 영역의 DOM 레퍼런스
             let options = { //지도를 생성할 때 필요한 기본 옵션
                 center: new daum.maps.LatLng(37.56611900511385, 126.97774128459538), //지도의 중심좌표.
-                level: 3 //지도의 레벨(확대, 축소 정도)
+                level: 4 //지도의 레벨(확대, 축소 정도)
 
             };
 
@@ -206,6 +232,19 @@ export default {
                 }
             }
         },
+        ListToggle() {
+            this.mapHeight
+            this.listFlag = (this.listFlag) ? false : true
+        },
+        ListOnOff(val) {
+            this.mapHeight
+            // this.listFlag = (this.listFlag) ? false : true
+            if(val === 'on'){
+                this.listFlag = true
+            }else if(val === 'off'){
+                this.listFlag = false
+            }
+        },
         getEstateList(code){
             code = code.substring(0,5)
             let sggCd = code+'00000'
@@ -226,11 +265,15 @@ export default {
                         data = eval(`(${data})`)
                     }
                     let paging = data.shift()
-                    this.makeEstateMarkers(data)
+                    let markers = this.makeEstateMarkers(data)
+                    let clusterer = this.makeClusterEstate(markers)
+                    this.estateClusterAddEventListener(clusterer)
+                    this.clusterer = clusterer
                 }
             })
         },
         makeEstateMarkers(data) {
+            let markers = []
             for (const value of data) {
               let img = value.img_url
               if(img === ''){
@@ -252,9 +295,11 @@ export default {
               }
               value.img_url = img
               let marker = this.setEstateMaker(value.xpos, value.ypos, value.memul_seq)
-              //markers.push(marker)
-              this.estateQueue.setQueue(marker)
-          }
+              markers.push(marker)
+              //this.estateQueue.setQueue(marker)
+            }
+            //this.makeClusterEstate(markers)
+            return markers
         },
         setEstateMaker(x,y,memul_seq) {
           let icon = new daum.maps.MarkerImage(
@@ -276,12 +321,173 @@ export default {
             marker.setMap(this.mapInstance)
           } */
           return marker
+        },
+        makeClusterEstate(markers){
+            this.cleanClusterer()
+            let clusterer = new daum.maps.MarkerClusterer({
+                map: this.mapInstance,
+                markers: markers,
+                gridSize: 60,
+                averageCenter: true,
+                minLevel: 2,
+                disableClickZoom: true,
+                styles: [{
+                width: '85px',
+                height: '85px',
+                backgroundColor: '#14a114',
+                opacity: '0.7',
+                color: '#fff',
+                fontSize: '25px',
+                fontWeight: '500',
+                position: 'absolute',
+                borderRadius: '50px',
+                textAlign: 'center',
+                lineHeight: '80px'
+                }]
+            })
+            clusterer.setMinClusterSize(3)
+            return clusterer
+        },
+        cleanClusterer() {
+            if(Object.keys(this.clusterer).length !== 0){
+                let clusterer = this.clusterer
+                clusterer.clear()
+            }
+        },
+        estateClusterAddEventListener(clusterer){
+            let clustererObj = clusterer
+            daum.maps.event.addListener( clusterer, 'clusterclick', ( cluster ) => {
+                let clickStyles = {
+                    width:'85px',
+                    height:'65px',
+                    backgroundColor:'#4db007',
+                    opacity:'1.0',
+                    border:'8px solid #fff',
+                    paddingTop: '20px',
+                    color:'#fff',
+                    fontSize: '22px',
+                    fontWeight:'500',
+                    borderRadius:'50px',
+                    textAlign:'center',
+                    lineHeight: '23px'
+                }
+                
+                let defaultStyles = {
+                    width: '85px',
+                    height: '85px',
+                    backgroundColor: '#14a114',
+                    opacity: '0.7',
+                    color: '#fff',
+                    fontSize: '25px',
+                    fontWeight: '500',
+                    position: 'absolute',
+                    borderRadius: '50px',
+                    textAlign: 'center',
+                    lineHeight: '80px',
+                    paddingTop: '0',
+                    border:'0px'
+                }
+
+                for (const value of clustererObj._clusters) {
+                
+                if(value.clicked){
+                    this.domStyleObjSet(value._content, defaultStyles)
+                    let num = value._markers.length
+                    value._content.innerHTML = num
+                }
+                value.clicked = false
+                
+                }
+                
+                this.domStyleObjSet(cluster._content, clickStyles)
+                cluster._content.innerHTML = '내놓은<br>매물'
+                cluster.clicked = true
+
+                //console.log(cluster)
+                //console.log(cluster._content)
+
+                
+                let markers = cluster.getMarkers()
+                let i=1
+                let str = ''
+                for (const value of markers) {
+                //console.log("매물번호:"+value.Xd)
+                str+= `${value.Xd},`
+                if(i === 10){
+                    break
+                }
+                i++
+                }
+                str = str.slice(0,-1)
+                this.clusterClick = str
+                //console.log( cluster.getCenter() );
+            })
+
+        },
+        domStyleObjSet(dom, styles){
+            for (const key in styles) {
+                if (styles.hasOwnProperty(key)) {
+                const element = styles[key];
+                const hypenKey = this.camelCaseToDash(key)
+                //console.log(element)
+                
+                //dom.style.removeProperty(key)
+                dom.style.setProperty(hypenKey, element)
+                
+                //console.log(dom.style.key)
+                }
+            }
+        },
+        camelCaseToDash( myStr ) {
+            return myStr.replace( /([a-z])([A-Z])/g, '$1-$2' ).toLowerCase();
+        },
+        estateClusterList(seq){
+            this.apiModel.getEstateListToSeq(seq).then((result)=>{
+                if(result.status === 200){
+                    console.log(result)
+                    let data = result.data
+                    let paging = data.shift()
+                    for (const value of data) {
+                        let img = value.img_url
+                        if(img === ''){
+                            img = '../src/assets/fc_noimg_263168.jpg'
+                            if(location.hostname === 'www.f-link.co.kr' || location.hostname === 'f-link.co.kr'){
+                                img = '/src/assets/fc_noimg_263168.jpg'
+                            }
+                        }
+                        else {
+                            let tmparr = []
+                            tmparr = img.split( ',', 2 )
+                            img = tmparr[0]
+                            let str = img.replace("http://image.bizmk.kr", "")
+                            let res = str.search("http://image.bizmk.kr")
+                            if(res === -1){
+                                str = 'http://image.bizmk.kr'+str
+                            }
+                            img = str
+                        }
+                        value.img_url = img
+                        let subwayInfo = value.subway_info
+                        subwayInfo = subwayInfo.split(',')
+                        let str = ''
+                        if(subwayInfo.length > 1){
+                            str = `${subwayInfo[0]}, ${subwayInfo[1]}`
+                        }else{
+                            str = subwayInfo[0]
+                        }
+                        value.subway_info = str
+                    }
+                    this.estateList = data
+                }
+            })
         }
+
 
     }
 }
 </script>
-
-<style scoped>
-
+<style>
+.map_list {
+    -webkit-overflow-scrolling:touch;
+}
 </style>
