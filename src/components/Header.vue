@@ -1,6 +1,6 @@
 <template>
     <div v-bind:class="{ main_bg: isMain }">
-        <!-- nav -->	
+        <!-- nav -->
 		<nav style='right:-285px; position: fixed;' ref="nav">
 			<ul class="menu_login">
 				<li v-if="Nauth"><a href="http://www.f-link.co.kr/m/index.php?TM=M&MM=1">로그인</a></li>
@@ -17,13 +17,13 @@
 				<li><router-link :to="{ name: 'home-page' }"><img src="http://m.mk.co.kr/images/2018/franchise/ico_menu_home.png" alt="홈">홈</router-link></li>
 				<li><router-link :to="{ name: 'store-page' }"><img src="http://m.mk.co.kr/images/2018/franchise/ico_menu_loca.png" alt="우리동네 매장">우리동네 매장</router-link></li>
 				<li><router-link :to="{ name: 'sales-page' }"><img src="http://m.mk.co.kr/images/2018/franchise/ico_menu_building.png" alt="상가매물">상가매물</router-link></li>
-				<li><a href=""><img src="http://m.mk.co.kr/images/2018/franchise/ico_menu_store.png" alt="브랜드">브랜드</a></li>
+				<li><router-link :to="{ name: 'brands-page' }"><img src="http://m.mk.co.kr/images/2018/franchise/ico_menu_store.png" alt="브랜드">브랜드</router-link></li>
 				<li><a href="http://www.f-link.co.kr/m/index.php?TM=C"><img src="http://m.mk.co.kr/images/2018/franchise/ico_menu_sale.png" alt="착한 컨설팅">착한 컨설팅</a></li>
 				<li><a href="http://www.f-link.co.kr/m/index.php?TM=N"><img src="http://m.mk.co.kr/images/2018/franchise/ico_menu_news.png" alt="창업뉴스">창업뉴스</a></li>
 				<li><a href="http://www.f-link.co.kr/m/index.php?TM=D"><img src="http://m.mk.co.kr/images/2018/franchise/ico_menu_event.png" alt="이벤트">이벤트</a></li>
 			</ul>
 		</nav>
-		<!--// nav -->	
+		<!--// nav -->
 
 		<!--  header -->
 		<header>

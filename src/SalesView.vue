@@ -29,12 +29,12 @@
                         <li>
                             <span>면적</span>
                             <p>계약/전용</p>
-                            <strong>{{item.SUPP_METER}} / {{item.USE_METER}}㎡</strong>							
-                        </li>						
+                            <strong>{{item.SUPP_METER}} / {{item.USE_METER}}㎡</strong>
+                        </li>
                     </ul>
                 </div>
             </div>
-            <div class="box">				
+            <div class="box">
                 <div class="txt">
                     <h1>매물정보</h1>
                     <table>
@@ -92,7 +92,7 @@
                         </tr>
                     </table>
                 </div>
-                
+
                 <div class="txt">
                     <h1>정보제공</h1>
                     <img :src="item.PROFILE_IMAGE" />
@@ -106,13 +106,13 @@
                             <li>전화</li>
                             <li>{{item.TEL_NO}} / {{item.CHARGE_MOBILE}}</li>
                         </ul>
-                    </div>	
+                    </div>
 
                 </div>
-                
+
                 <div class="txt">
-                    
-                    
+
+
                     <div class="map_list">
                         <div class="map" ref="map">
                         </div>
@@ -148,7 +148,7 @@
             $route: function(){
                 this.getSalesView(this.$route.params.id)
             }
-        }, 
+        },
         created () {
             this.getSalesView(this.$route.params.id)
         },
@@ -210,14 +210,14 @@
                         let tmparr = []
                         //console.log(data.IMG_URL)
                         if(img === ''){
-                            img = '../src/assets/fc_noimg_263168.jpg'
+                            img = '../../src/assets/fc_noimg_263168.jpg'
                             if(location.hostname === 'www.f-link.co.kr' || location.hostname === 'f-link.co.kr'){
                                 img = '/src/assets/fc_noimg_263168.jpg'
                             }
                             tmparr.push(img)
                             data.IMG_URL = tmparr
                         }else{
-                            img = img.split( ',' )		
+                            img = img.split( ',' )
                             for (const value of img) {
                                 let str = value.replace("http://image.bizmk.kr", "")
                                 let res = str.search("http://image.bizmk.kr")
@@ -239,7 +239,7 @@
                         this.getAddrToCodelaw(data.BUBCODE)
                         this.item = data
                         this.setMaker(data.YPOS, data.XPOS, data)
-                        
+
                     }
                 })
 		    },
@@ -268,7 +268,7 @@
                     this.pyeongToggle = false
                 }
             },
-            getAddrToCodelaw(codelaw){      
+            getAddrToCodelaw(codelaw){
                 this.apiModel.getAddrToCodelaw(codelaw).then((result)=>{
                     let addr = ''
                     if(result.status === 200){
