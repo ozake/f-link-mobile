@@ -54,6 +54,7 @@ export default {
           break;
         case 'storeView':
           this.subHeaderTitle = '매장 상세정보'
+          this.footerFlag = true
           break;
         case 'sales':
           this.subHeaderTitle = '상가점포 매물검색'
@@ -61,12 +62,12 @@ export default {
           break;
         case 'salesView':
           this.subHeaderTitle = '매물 상세정보'
-          this.footerFlag = false
+          this.footerFlag = true
           break;
 
         default:
           this.subHeaderTitle = ''
-
+          this.footerFlag = true
           break;
       }
       /* if(this.$route.path === '/m/store'){

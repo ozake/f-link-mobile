@@ -29,14 +29,14 @@
             <div class="map_list" v-show="listFlag">
                 <ul class="sale" style="height: 242px;">
                     <li v-for="item in estateList">
-						<a href="#">
+						<router-link :to="{ name: 'sales-view', params: { id:item.memul_seq } }">
 							<span class="img"><img :src="item.img_url" alt=""></span>
 							<span class="text">
 								<span class="tit"><strong>월</strong>보{{item.month_deposit_price}}/월{{item.month_price}}</span>
 								<span class="adress">{{item.area1 + ' ' + item.area2 +' '+ item.area3}}</span>
 								{{item.corrp_flr}}층  {{item.supp_meter}}㎡<br>{{item.subway_info}}
 							</span>
-						</a>
+						</router-link>
 					</li>
                 </ul>
             </div>
@@ -489,5 +489,8 @@ export default {
 <style>
 .map_list {
     -webkit-overflow-scrolling:touch;
+}
+.img img {
+    max-height: 150px;
 }
 </style>
