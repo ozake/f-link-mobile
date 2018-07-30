@@ -70,7 +70,7 @@
         }
       },
       onClickItem(item) {
-        console.log(item)
+        this.$router.push({ name: 'franchise-view', params: {id:item.no } })
       },
     }
   }

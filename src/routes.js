@@ -5,6 +5,7 @@ import StoreView from './StoreView.vue'
 import Sales from './Sales.vue'
 import SalesView from './SalesView.vue'
 import Brands from './Brands.vue'
+import FranchiseView from './FranchiseView.vue'
 export default [
     {
       path: '/m/',
@@ -35,6 +36,11 @@ export default [
       path: '/m/brands',
       name: 'brands-page',
       component: Brands
+    },
+    {
+      path: '/m/franchiseView/:id',
+      name: 'franchise-view',
+      component: FranchiseView
     },
     {
       path: '*',
