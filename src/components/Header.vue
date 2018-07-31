@@ -14,7 +14,7 @@
 				<li><button type="button" @click="sideMenuOnOff"><span class="ic_close"></span></button></li>
 			</ul>
 			<ul class='menu_list'>
-				<li><router-link :to="{ name: 'home-page' }"><img src="http://m.mk.co.kr/images/2018/franchise/ico_menu_home.png" alt="홈">홈</router-link></li>
+				<li><router-link :to="{ path: '/m/' }"><img src="http://m.mk.co.kr/images/2018/franchise/ico_menu_home.png" alt="홈">홈</router-link></li>
 				<li><router-link :to="{ name: 'store-page' }"><img src="http://m.mk.co.kr/images/2018/franchise/ico_menu_loca.png" alt="우리동네 매장">우리동네 매장</router-link></li>
 				<li><router-link :to="{ name: 'sales-page' }"><img src="http://m.mk.co.kr/images/2018/franchise/ico_menu_building.png" alt="상가매물">상가매물</router-link></li>
 				<li><router-link :to="{ name: 'brands-page' }"><img src="http://m.mk.co.kr/images/2018/franchise/ico_menu_store.png" alt="브랜드">브랜드</router-link></li>
@@ -28,7 +28,7 @@
 		<!--  header -->
 		<header>
 			<ul>
-				<li class="logo" v-if="isMain"><a href="#"><img src="http://m.mk.co.kr/images/2018/franchise/img_main_logo.png" alt="프랜차이즈링크"></a></li>
+				<li class="logo" v-if="isMain"><span><img src="http://m.mk.co.kr/images/2018/franchise/img_main_logo.png" alt="프랜차이즈링크"></span></li>
 				<li class="back" v-show="!isMain" @click="back"><img src="http://m.mk.co.kr/images/2018/franchise/btn_back.png" alt="뒤로가기"></li>
 				<li class="title" v-if="!isMain">{{subHeaderTitle}}</li>
 				<li class="menu" ><img src="http://m.mk.co.kr/images/2018/franchise/btn_main_menu.png" @click="sideMenuOnOff" alt="메뉴"></li>
@@ -134,4 +134,5 @@ export default {
 header .title {
 	color: #fff;
 }
+header .logo span {display: block;overflow: hidden;width: 200px;margin: 0 auto;padding-top: 12px}
 </style>

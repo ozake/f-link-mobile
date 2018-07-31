@@ -10,6 +10,7 @@
           </ul>
         </div>
         <search-brand v-show="nameFlag"></search-brand>
+        <sector-brand v-show="sectorFlag"></sector-brand>
       </div>
     </div>
   </section>
@@ -18,6 +19,7 @@
 
 <script>
   import SearchBrand from './components/SearchBrnad.vue'
+  import SectorBrand from './components/SectorBrand.vue'
   export default {
     name: 'Brands',
     data() {
@@ -27,7 +29,8 @@
       }
     },
     components : {
-      SearchBrand
+      SearchBrand,
+      SectorBrand
     },
     created() {
 

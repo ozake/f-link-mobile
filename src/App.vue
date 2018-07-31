@@ -72,6 +72,10 @@ export default {
           this.subHeaderTitle = '브랜드 상세정보'
           this.footerFlag = true
           break;
+        case 'brandsList':
+          this.subHeaderTitle = '브랜드 리스트'
+          this.footerFlag = false
+          break;
         default:
           this.subHeaderTitle = ''
           this.footerFlag = true

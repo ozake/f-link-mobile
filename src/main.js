@@ -22,8 +22,10 @@ router.beforeEach((to, from, next) => {
   // ...
   //console.log(to.path)
   if(to.path === '/'){
-    next({ path: '/m/' })
+    //next({ path: '/m/home' })
     console.log('리다이렉트')
+    next({ path: '/m/' })
+    
     //next('/m/')
   }else {
     next()

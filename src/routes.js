@@ -6,6 +6,7 @@ import Sales from './Sales.vue'
 import SalesView from './SalesView.vue'
 import Brands from './Brands.vue'
 import FranchiseView from './FranchiseView.vue'
+import BrandList from './BrandList.vue'
 export default [
     {
       path: '/m/',
@@ -36,6 +37,19 @@ export default [
       path: '/m/brands',
       name: 'brands-page',
       component: Brands
+    },
+    {
+      path: '/m/brandsList/:categoryCode/:page',
+      name: 'brands-list-page',
+      component: BrandList,
+      children: [
+        {
+          path: ':minprice/:maxprice',
+          name: 'brands-list-mnpage',
+          props: true,
+          component: BrandList,
+        }
+      ]
     },
     {
       path: '/m/franchiseView/:id',
